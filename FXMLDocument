@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="conversion.FXMLDocumentController">
+    <children>
+        <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
+      <ComboBox fx:id="modeBox" layoutX="416.0" layoutY="43.0" onMouseClicked="#changeModeAction" prefWidth="150.0" promptText="Single" visibleRowCount="6" />
+      <Button fx:id="conversionBtn" layoutX="465.0" layoutY="304.0" mnemonicParsing="false" onMouseClicked="#convertAction" text="Convert" />
+      <Button fx:id="backConversionBtn" layoutX="465.0" layoutY="507.0" mnemonicParsing="false" onMouseClicked="#backConvertAction" text="Convert" />
+      <TextField fx:id="decimalText" layoutX="35.0" layoutY="304.0" prefHeight="25.0" prefWidth="423.0" />
+      <TextField fx:id="conversionSignText" layoutX="35.0" layoutY="507.0" prefHeight="25.0" prefWidth="28.0" />
+      <TextField fx:id="conversionExponentText" layoutX="63.0" layoutY="507.0" prefHeight="25.0" prefWidth="116.0" />
+      <TextField fx:id="conversionSignificandText1" layoutX="179.0" layoutY="507.0" prefHeight="25.0" prefWidth="282.0" />
+      <TextField fx:id="conversionSignificandText2" layoutX="179.0" layoutY="532.0" prefHeight="25.0" prefWidth="282.0" />
+      <Button fx:id="changeBtn" layoutX="514.0" layoutY="89.0" mnemonicParsing="false" onMouseClicked="#changeModeAction" text="Swap" />
+    </children>
+</AnchorPane>
