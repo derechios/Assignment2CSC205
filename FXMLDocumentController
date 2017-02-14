@@ -1,0 +1,276 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package conversion;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.event.*;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import java.math.*;
+
+/**
+ *
+ * @author Liam
+ */
+public class FXMLDocumentController implements Initializable {
+    
+    @FXML private Button conversionBtn;
+    @FXML private Button backConversionBtn;
+    @FXML private ComboBox modeBox;
+    @FXML private TextField decimalText;
+    @FXML private TextField conversionSignificandText1;
+    @FXML private TextField conversionSignificandText2;
+    @FXML private TextField conversionExponentText;
+    @FXML private TextField conversionSignText;
+    @FXML private Button changeBtn;
+    private String mode = "Single";
+    
+    
+    @FXML
+    private void handleButtonAction(Event event) {
+        System.out.println("You clicked me!");
+    }
+    
+    @FXML
+    private void convertAction(Event e)
+    {
+        if(mode.compareTo("Single")==0)
+        {
+            String temp = DecimalToSingle(Double.parseDouble(decimalText.getText()));
+            conversionSignText.setText(temp.substring(0, 1));
+            conversionExponentText.setText(temp.substring(1, 9));
+            conversionSignificandText1.setText(temp.substring(12, 35));
+        }
+        else if(mode.compareTo("Double")==0)
+        {
+            String temp = DecimalToDouble(Double.parseDouble(decimalText.getText()));
+            conversionSignText.setText(temp.substring(0, 1));
+            conversionExponentText.setText(temp.substring(1, 12));
+            conversionSignificandText1.setText(temp.substring(12,38));
+             conversionSignificandText1.setAlignment(Pos.TOP_RIGHT);
+            conversionSignificandText2.setText(temp.substring(38, temp.length()));
+             conversionSignificandText2.setAlignment(Pos.TOP_RIGHT);
+        }
+        else if(mode.compareTo("Hex")==0)
+        {
+            conversionSignificandText1.setText(DecimalToHex(Double.parseDouble(decimalText.getText())));
+        }
+        else
+        {
+            
+            int temp = DecimalToBinary(Double.parseDouble(decimalText.getText())).length();
+            conversionSignificandText1.setText(DecimalToBinary(Double.parseDouble(decimalText.getText())).substring(0, temp/2));
+            conversionSignificandText1.setAlignment(Pos.TOP_RIGHT);
+            
+            conversionSignificandText2.setText(DecimalToBinary(Double.parseDouble(decimalText.getText())).substring(temp/2, temp));
+            conversionSignificandText2.setAlignment(Pos.TOP_RIGHT);
+        }
+    }
+    
+    @FXML
+    private void backConvertAction(Event e)
+    {
+        if(mode.compareTo("Single")==0)
+        {
+            
+            decimalText.setText(SingleToDecimal());
+        }
+        else if(mode.compareTo("Double")==0)
+        {
+            decimalText.setText(DoubleToDecimal());
+        }
+        else if(mode.compareTo("Hex")==0)
+        {
+           decimalText.setText(HexToDecimal());
+        }
+        else
+        {
+            decimalText.setText(BinaryToDecimal());
+        }
+    
+    }
+    
+    @FXML
+    private void changeModeAction(Event e)
+    {
+        switch(modeBox.getSelectionModel().getSelectedIndex())
+        {
+            case  1:
+                mode = "Single";
+                break;
+            case  2:
+                mode = "Double";
+                break;
+            case  3:
+                mode = "Hex";
+                break;
+            default:
+                mode = "Binary";
+                break;
+        }
+    }
+    
+    
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        modeBox.getItems().addAll("Single", "Double", "Hex", "Binary");
+       
+    }    
+    
+    private String DecimalToSingle(double x)
+    {
+        
+      String temp = "" + Long.toBinaryString(Double.doubleToRawLongBits(x));
+      while (temp.length()<64)
+      {
+          temp = "0"+temp;
+      }
+       return temp;
+    }
+    private String DecimalToDouble(double x)
+    {
+        String temp = "" + Long.toBinaryString(Double.doubleToRawLongBits(x));
+      while (temp.length()<64)
+      {
+          temp = "0"+temp;
+      }
+       return temp;
+    }
+    private String DecimalToHex(double x)
+    {
+       
+        return ""+ Double.toHexString(x);
+    }
+    private String DecimalToBinary(double x)
+    {
+       String temp =""+ Long.toBinaryString(Double.doubleToRawLongBits(x));
+       while (temp.length()<64)
+       {
+           temp = "0"+temp;
+       }
+       return temp;
+    }
+    private String SingleToDecimal()
+    {
+       String t1 = conversionSignText.getText();
+       String t2 = conversionExponentText.getText();
+       String t3 = conversionSignificandText1.getText();
+       
+       
+       while(t1.length()<1)
+       { t1 = "0"+t1; }
+     //  t1 = t1.substring(0, 1);
+     conversionSignText.setText(t1);
+       while(t2.length()<8)
+       { t2 += "0"; }
+     //  t2 = t2.substring(0, 7);
+     conversionExponentText.setText(t2);
+       while(t3.length()<23)
+       { t3 += "0"; }
+      // t3 = t3.substring(0, 22);
+      conversionSignificandText1.setText(t3);
+      conversionSignificandText2.setText("");
+       String temp = t2+t3;
+      if(t1.equals("1")){t1 = "-";}else{t1="";}
+       int exp = 0;
+       for(int a = 0; a<t2.length(); a++)
+       {
+           if( t2.charAt(a)=='1')
+           {
+           exp +=Math.pow(2, (t2.length()-a));
+           }
+       }
+        exp -=127;
+       int sig = 0;
+       for(int y=0; y<t3.length(); y++)
+       {
+           if( t3.charAt(y)=='1')
+           {
+          sig +=Math.pow((.5), (y*-1)-1);
+           }
+       }
+       return ""+t1+ (1+sig)*Math.pow(2, exp);
+    }
+    private String DoubleToDecimal()
+    {
+       
+         String t1 = conversionSignText.getText();
+       String t2 = conversionExponentText.getText();
+       String t3 = conversionSignificandText1.getText();
+       t3+= conversionSignificandText2.getText();
+       
+       while(t1.length()<1)
+       { t1 = "0"+t1; }
+     //  t1 = t1.substring(0, 1);
+     conversionSignText.setText(t1);
+       while(t2.length()<11)
+       { t2 += "0"; }
+     //  t2 = t2.substring(0, 7);
+     conversionExponentText.setText(t2);
+       while(t3.length()<52)
+       { t3 += "0"; }
+      // t3 = t3.substring(0, 22);
+      conversionSignificandText1.setText(t3);
+       String temp = t2+t3;
+      if(t1.equals("1")){t1 = "-";}else{t1="";}
+       int exp = 0;
+       for(int a = 0; a<t2.length(); a++)
+       {
+           if( t2.charAt(a)=='1')
+           {
+           exp +=Math.pow(2, (t2.length()-a));
+           }
+       }
+        exp -=1023;
+       int sig = 0;
+       int power = -1;
+        float total =(float) 0.0;
+        for ( int i = 0; i < 23; i++ )
+        {
+             int c = Integer.parseInt(""+t3.charAt(i));
+            total += (float) c * (float) Math.pow( 2.0, power );
+         power--;
+        }
+        total += 1.0;
+     /*  for(int y=0; y<t3.length(); y++)
+       {
+           if( t3.charAt(y)=='1')
+           {
+          sig +=Math.pow((.5), ((y+1)*-1));
+           }
+       }*/
+       return ""+t1+ total;
+    }
+    //copied from internethttp://stackoverflow.com/questions/20110533/converting-hexadecimal-string-to-decimal-integer
+    public static int hex2decimal(String s) {
+             String digits = "0123456789ABCDEF";
+             s = s.toUpperCase();
+             int val = 0;
+             for (int i = 0; i < s.length(); i++) {
+                 char c = s.charAt(i);
+                 int d = digits.indexOf(c);
+                 val = 16*val + d;
+             }
+             return val;
+         }
+    
+    private String HexToDecimal()
+    {
+      return ""+ hex2decimal(conversionSignificandText1.getText());
+    }
+    private String BinaryToDecimal()
+    {
+       
+        return "";
+    }
+    
+    
+    
+    
+}
